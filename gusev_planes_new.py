@@ -75,9 +75,8 @@ class Plane(object):
         else:
             text_y = self.y_position/10 - 15
         canvas.create_text(text_x, text_y, text = self.number,fill = self.colour, tag = "visual_plane")
-
+# тестовая строка
 pos_random = arange(1,5000,0.1)
-speed_random = range(30,100,1)
 dir_random = range(1,360,1)
 planes = list()
 planes_for_compare = list()
