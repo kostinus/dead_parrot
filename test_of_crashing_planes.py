@@ -44,14 +44,8 @@ class Plane(object):
         self.new_x_position = round(self.x_position + self.speed * cos(self.direction * pi / 180), 2)
         self.new_y_position = round(self.y_position + self.speed * sin(self.direction * pi / 180), 2)
 
-        # Случайно изменение направления. Чтобы не накручивать слишком большое количество градусов, контролируем, чтобы итоговое значение осталось в пределах 360.  
-        if self.direction >= 15 or self.direction <= 345:
-            self.direction = self.direction + random.randrange(-15,16)
-        elif self.direction < 15:
-            self.direction = self.direction + random.randrange (0,16)
-        else:
-            self.direction = self.direction - random.randrange (0,16)
-        # Присваиваем новое значение скорости.  
+        # Меняем направление и скорость случайным образом.  
+        self.direction = self.direction + random.randrange(-15, 16)
         self.speed = random.choice(speed_random)
 
     # Функция для определения вылета за пределы поля.  
@@ -67,17 +61,33 @@ class Plane(object):
         canvas.create_line(self.x_position/10, self.y_position/10, self.new_x_position/10, self.new_y_position/10, fill = self.colour, arrow="last", tag = "visual_plane")
 
         # Создаём текстовую метку с номером самолёта, которая будет отображаться рядом с ним.  
-        if self.new_x_position > self.x_position and self.new_x_position < 4950:
-            text_x = self.new_x_position/10 + 5
+        if self.new_x_position > self.x_position:
+            if self.new_x_position >= 4900:
+                text_x = self.new_x_position / 10 - 15
+            else:
+                text_x = self.new_x_position / 10 + 10
         else:
-            text_x = self.new_x_position/10 - 5
+            if self.new_x_position <= 100:
+                text_x = self.new_x_position / 10 + 15
+            else:
+                text_x = self.new_x_position / 10 - 10
+
         if self.new_y_position/10 > self.y_position:
-            text_y = (self.new_y_position + 100)/10 + 5
+            if self.new_y_position >= 4900:
+                text_y = self.new_y_position / 10 - 15
+            else:
+                text_y = (self.new_y_position + 100) / 10 + 10
         else:
-            text_y = self.new_y_position/10 - 5
+            if self.new_y_position <= 100:
+                text_y = self.new_y_position / 10 + 15
+            else:
+                text_y = self.new_y_position / 10 - 10
         canvas.create_text(text_x, text_y, text = self.number,fill = self.colour, tag = "visual_plane")
 
-    # Функция для определения столкновения двух самолётов. Мы создаём для каждого самолёта по отрезку от старого положения до нового. Функция возвращает список точек пересечения двух отрезков. Если длина списка нулевая, пересечения нет. Если больше 0, значит пересечение есть и самолёты столкнулись.  
+    # Функция для определения столкновения двух самолётов.  
+    # Создаём для каждого самолёта по отрезку от старого положения до нового.  
+    # Функция возвращает список точек пересечения двух отрезков.  
+    # Если длина списка нулевая, пересечения нет. Если больше 0, значит пересечение есть и самолёты столкнулись.  
     def crash(self, other):
         seg1_1 = Point(self.x_position, self.y_position)
         seg1_2 = Point(self.new_x_position,self.new_y_position)
@@ -114,8 +124,8 @@ canvas.pack()
 
 # Рисуем сетку.  
 for g in range(0, 500, 50):
-    canvas.create_line(0, g, 1000, g, fill="#A0A0A0")
-    canvas.create_line(g, 0, g, 1000, fill="#A0A0A0")
+    canvas.create_line(0, g, 500, g, fill="#A0A0A0")
+    canvas.create_line(g, 0, g, 500, fill="#A0A0A0")
     canvas.create_text(g+15, 10, text = g * 10, fill="#A0A0A0", justify="left")
     if g > 0:
         canvas.create_text(15, g+10, text = g * 10, fill="#A0A0A0", justify="left")
@@ -137,8 +147,8 @@ canvas.delete(countdown)
 # Создаём самолёты в том количестве, которое получили от пользователя.  
 for i in range(1, number_of_planes+1):
     a = Plane(i, round(random.choice(pos_random), 2), round(random.choice(pos_random), 2), 0, 0, random.choice(speed_random), random.choice(dir_random), plane_colour())
-    a.new_x_position = a.x_position
-    a.new_y_position = a.y_position
+    a.new_x_position = a.x_position + 1 * cos(a.direction * pi / 180)
+    a.new_y_position = a.y_position + 1 * sin(a.direction * pi / 180)
     # print("Создан {}".format(a))
     planes.append(a)
 
@@ -151,10 +161,11 @@ while True:
     canvas.delete("count")
     canvas.create_text(460, 490, text = "ход № {}".format(count), tag = "count")
     canvas.delete("visual_plane")
+    
     for vis in planes:
         vis.visual()
     canvas.update()
-    
+
     print("Ход №{}".format(count))
     for f in planes:
         f.fly()
@@ -165,6 +176,8 @@ while True:
         # print("самолёт {}.off = {}".format(off.number, off.out()))
         if off.out()==1:
             planes.remove(off)
+            canvas.delete("message")
+            canvas.create_text(250,30,text="на ходу №{} самолёт №{} покинул поле".format(count,off.number),fill="red",tag = "message")
             print("{} покинул поле.".format(off))
 
     # Берём каждый самолёт в списке и проверяем на столкновение с каждым последующим из списка.  
@@ -176,6 +189,9 @@ while True:
             if current_plane.crash(an) > 0:
                 another_plane = an
                 another_plane_index = planes.index(an)
+                canvas.delete("message")
+                canvas.create_text(250,30,text="на ходу №{} столкнулись самолёты №{} и №{}".format(count,cr.number, an.number),fill="red",tag = "message")
+
                 print("Cтолкнулись самолёты {} и {}.".format(current_plane, another_plane))
                 del planes[another_plane_index]
                 del planes[current_plane_index]
@@ -194,3 +210,9 @@ while True:
         break
 
 print("самолётов больше не осталось")
+time.sleep(3)
+canvas.delete("message")
+canvas.delete("visual_plane")
+canvas.create_text (250,250,text="самолётов больше не осталось", font = "50", fill="red")
+canvas.update()
+time.sleep(5)
