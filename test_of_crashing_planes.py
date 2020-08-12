@@ -120,7 +120,8 @@ for g in range(0, 500, 50):
         canvas.create_text(15, g+10, text = g * 10, fill="#A0A0A0", justify="left")
     canvas.update()
 
-""" Рисуем обратный отсчёт.
+"""
+Рисуем обратный отсчёт.
 for c in range(3,0,-1):
     countdown = canvas.create_text(250,250,text=c,fill="red",font=50)
     canvas.update()
@@ -129,7 +130,8 @@ for c in range(3,0,-1):
 countdown = canvas.create_text(250, 250, text="полетели!", fill="red",font=50)
 canvas.update()
 sleep(1)
-canvas.delete(countdown) """
+canvas.delete(countdown)
+"""
 
 # Создаём самолёты в том количестве, которое получили от пользователя.  
 for i in range(1, number_of_planes+1):
