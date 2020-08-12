@@ -20,6 +20,7 @@ if __name__ == "__main__":
                 print ("Надо ввести положительное число.")
 
 
+
 # Описываем самолёт как класс.  
 class Plane(object):
     def __init__ (self, number, x_position, y_position, new_x_position, new_y_position, speed, direction, colour):
