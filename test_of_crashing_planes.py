@@ -147,8 +147,9 @@ canvas.delete(countdown)
 # Создаём самолёты в том количестве, которое получили от пользователя.  
 for i in range(1, number_of_planes+1):
     a = Plane(i, round(random.choice(pos_random), 2), round(random.choice(pos_random), 2), 0, 0, random.choice(speed_random), random.choice(dir_random), plane_colour())
-    a.new_x_position = a.x_position + 1 * cos(a.direction * pi / 180)
-    a.new_y_position = a.y_position + 1 * sin(a.direction * pi / 180)
+    # Сразу добавляем новые координаты с учётом направления. Это нужно, чтобы до начала движения самолёты отображались как стрелки.
+    a.new_x_position = a.x_position + round(1 * cos(a.direction * pi / 180), 2)
+    a.new_y_position = a.y_position + round(1 * sin(a.direction * pi / 180), 2)
     # print("Создан {}".format(a))
     planes.append(a)
 
