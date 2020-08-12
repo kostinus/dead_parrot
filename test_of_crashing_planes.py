@@ -19,6 +19,7 @@ if __name__ == "__main__":
         except ValueError:
                 print ("Надо ввести положительное число.")
 
+# трампампам
 
 # Описываем самолёт как класс.  
 class Plane(object):
