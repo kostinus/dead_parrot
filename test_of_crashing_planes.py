@@ -67,14 +67,14 @@ class Plane(object):
         canvas.create_line(self.x_position/10, self.y_position/10, self.new_x_position/10, self.new_y_position/10, fill = self.colour, arrow="last", tag = "visual_plane")
 
         # Создаём текстовую метку с номером самолёта, которая будет отображаться рядом с ним.  
-        if self.new_x_position < 4950:
-            text_x = self.new_x_position/10 + 10
+        if self.new_x_position > self.x_position and self.new_x_position < 4950:
+            text_x = self.new_x_position/10 + 5
         else:
-            text_x = self.new_x_position/10-10
-        if self.new_y_position/10 < 4950:
-            text_y = (self.new_y_position + 100)/10 + 10
+            text_x = self.new_x_position/10 - 5
+        if self.new_y_position/10 > self.y_position:
+            text_y = (self.new_y_position + 100)/10 + 5
         else:
-            text_y = self.new_y_position/10 - 10
+            text_y = self.new_y_position/10 - 5
         canvas.create_text(text_x, text_y, text = self.number,fill = self.colour, tag = "visual_plane")
 
     # Функция для определения столкновения двух самолётов. Мы создаём для каждого самолёта по отрезку от старого положения до нового. Функция возвращает список точек пересечения двух отрезков. Если длина списка нулевая, пересечения нет. Если больше 0, значит пересечение есть и самолёты столкнулись.  
