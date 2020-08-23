@@ -8,6 +8,7 @@ column2 = list()
 column3 = list()
 column4 = list()
 
+
 for row in data_line:
     try:
         column1.append(int(row[0]))
